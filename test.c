@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 typedef void (*fpVictim)(unsigned long long);
-
+typedef void(* fp_printf)(const char *__format);
 void HookTest(unsigned long long arg1){
     fpVictim addr = NULL;
     GET_VICTIM_ADDR(&addr);
@@ -16,16 +16,26 @@ void HookTest(unsigned long long arg1){
     return;
 }
 
+void HookPrintf(const char *__format, int argument){
+    fp_printf pf = NULL;
+    GVA(&pf);
+    return;
+}
+
 void VictimTest(unsigned long long arg1){
     printf("Dull normal test %llu \n", arg1);
     return;
 }
 
+
 int main(){
     HookInfo h;
-    InstallHook(VictimTest, HookTest, &h);
-    VictimTest(1234);
-    RemoveHook(VictimTest, &h);
-    VictimTest(1234);
+    // InstallHook(VictimTest, HookTest, &h);
+    // VictimTest(1234);
+    // RemoveHook(VictimTest, &h);
+    // VictimTest(1234);
+    InstallHook(printf, HookPrintf, &h);
+    printf("my number is 123 == %d\n", 123);
+    RemoveHook(printf, &h);
     printf("Graceful exit\n");
 }

@@ -13,16 +13,6 @@
 #define JMP 0xe0
 #define LEN_IMPLANT 12
 
-/* DEFINE INPUT PARAMETERS BASED ON HOOKED FUNCTIONS*/
-extern void decoy(int);
-
-extern void decoy1(void);
-extern void decoy2(void);
-extern void decoy3(void);
-extern void decoy4(void);
-extern void decoy5(void);
-extern void decoy6(void);
-
 
 #define GET_VICTIM_ADDR(addr) \
     asm volatile ("movq %%rsi, %0" : : "m"(*(addr)))
