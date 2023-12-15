@@ -1,10 +1,18 @@
 #include "winhook.h"
 #include <stdio.h>
 
+typedef void (*fpVictim)(unsigned long long);
+
 void HookTest(unsigned long long arg1){
+    fpVictim addr = NULL;
+    GET_VICTIM_ADDR(&addr);
     printf("we hooked the function here! original input: %llu\n", arg1);
-    printf("Value will be modified to 5678\n");
-    decoy(5678);
+    if (arg1 == 1234){
+        printf("Value will be modified to 5678\n");
+        addr(5678);
+        return;
+    }
+    addr(arg1);
     return;
 }
 
