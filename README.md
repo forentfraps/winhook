@@ -2,7 +2,7 @@
 
 Decided to write a hooking library for windows, mainly for future projects :D
 
-It utilises external disassembler, since writing my own would take ages. Hook it creates is not a simple trampoline and actually lets the function run normally.
+It utilises external disassembler, since writing my own would take ages. Hook, which it creates is not a simple trampoline and actually lets the function run normally.
 
 
 
