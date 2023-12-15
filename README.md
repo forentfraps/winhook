@@ -19,3 +19,4 @@ Example usage is provided in the test.c
  - Add an option to hook into remote process
  - Figure out why calling function inside the hook catalyst messes up the stack
  - The r14 incident (basically if r14 is touched by the victim function in the first 12 bytes everything crumbles and dies)
+ - Skim down Zydis, since I do not utilise most of it functionality
