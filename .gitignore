@@ -1,3 +1,4 @@
 *.exe*
 windows_intern.c
 .vscode
+*.o

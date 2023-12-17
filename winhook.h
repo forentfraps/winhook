@@ -19,15 +19,6 @@
 
 #define GVA GET_VICTIM_ADDR
 
-#define GRACEFUL_RETURN_HOOK asm volatile(\
-    "leave\n\t"\
-    "pop %rsi\n\t"\
-    "pop %rbp\n\t"\
-    "ret\n\t"\
-);
-
-#define GRA GRACEFUL_RETURN_HOOK
-
 typedef struct hook_info{
     LPVOID catalyst;
     unsigned char bytes[LEN_IMPLANT];
