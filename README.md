@@ -18,5 +18,4 @@ Example usage is provided in the test.c
 ## TODO:
  - Check for jump tables, and\or IAT
  - Add an option to hook into remote process
- - The r14 incident (basically if r14 is touched by the victim function in the first 12 bytes everything crumbles and dies)
  - Skim down Zydis, since I do not utilise most of it functionality
