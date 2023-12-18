@@ -19,25 +19,28 @@ NTSTATUS hook(SYSTEM_INFORMATION_CLASS a1,PVOID a2,ULONG a3,PULONG a4){
     return res;
 }
 
+typedef void (*fp)(unsigned long long arg1);
+
+void HookTest(unsigned long long arg1){
+    fp f = NULL;
+    GVA(&f);
+    printf("we hooked the function here! original input: %llu\n", arg1);
+    printf("Value will be modified to 5678\n");
+    f(5678);
+    return;
+}
+
+void VictimTest(unsigned long long arg1){
+    printf("Dull normal test %llu \n", arg1);
+    return;
+}
+
 int main(){
     HookInfo h;
-    fpNtQuerySystemStatus ntqss = NULL;
-    // InstallHook(VictimTest, HookTest, &h);
-    // VictimTest(1234);
-    // RemoveHook(VictimTest, &h);
-    // VictimTest(1234);
-    ULONG l = 0;
-    HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
-    ntqss = GetProcAddress(ntdll, "NtQuerySystemInformation");
-    ntqss(SystemProcessInformation, NULL, 0, &l);
-    printf("%lu\n", l);
-    InstallHook(ntqss, hook, &h);
-    ntqss(SystemProcessInformation, NULL, 0, &l);
-    printf("%lu\n", l);
-    ntqss(SystemProcessInformation, NULL, 0, &l);
-    printf("%lu\n", l);
-    ntqss(SystemProcessInformation, NULL, 0, &l);
-    printf("%lu\n", l);
-    RemoveHook(ntqss, &h);
+    VictimTest(1234);
+    InstallHook(VictimTest, HookTest, &h);
+    VictimTest(1234);
+    RemoveHook(VictimTest, &h);
+    VictimTest(1234);
     printf("Graceful exit\n");
 }

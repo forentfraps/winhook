@@ -1,2 +1,1 @@
-gcc test.c winhook.c Zydis.c -o test.exe
-del *.o
+gcc test.c winhook.c Zydis.o -o test.exe

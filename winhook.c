@@ -51,16 +51,12 @@ int InstallHook(void* pf_victim, void* pf_hook, HookInfo* _hook_info){
     // 39
     memcpy(temp_storage + 39, instruction_buf, offset);
     // 39 +  offset
-    temp_storage[39 + offset + 0] = 0x49;
-    temp_storage[39 + offset + 1] = 0xbe;
-    // 41 + offset
-    if (i2h((unsigned long long)after_hook_addr, temp_storage + 41 + offset)){
+    unsigned char hook_end[] = {0x56, 0x48, 0xBE, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00, 0xFF, 0xE6};
+    memcpy(temp_storage + 39 + offset, hook_end, sizeof(hook_end));
+    if (i2h((unsigned long long)after_hook_addr - 1, temp_storage + 42 + offset)){
         return -1;
     }
-    // 49 + offset
-    temp_storage[49 + offset] = 0x41;
-    temp_storage[49 + offset + 1] = 0xff;
-    temp_storage[49 + offset + 2] = 0xe6;
+
     // 52 + offset
     memcpy(catalyst, temp_storage, offset + 52);
     temp_storage[0] = 0x48;
@@ -70,15 +66,17 @@ int InstallHook(void* pf_victim, void* pf_hook, HookInfo* _hook_info){
     if (i2h((unsigned long long)catalyst, temp_storage + 2)){
         return -1;
     }
-    if (!VirtualProtect(pf_victim, LEN_IMPLANT, PAGE_EXECUTE_READWRITE, (PDWORD)&oldprotect)){
+    if (!VirtualProtect(pf_victim, offset, PAGE_EXECUTE_READWRITE, (PDWORD)&oldprotect)){
         return -1;
     }
     memcpy(pf_victim, temp_storage, LEN_IMPLANT);
-    if (!VirtualProtect(pf_victim, LEN_IMPLANT, PAGE_EXECUTE_READ, (PDWORD)&oldprotect)){
-        return -1;
-    }
+    memset((LPVOID)after_hook_addr - 1, 0x5e, 1);
+    // if (!VirtualProtect(pf_victim, LEN_IMPLANT, PAGE_EXECUTE_READ, (PDWORD)&oldprotect)){
+    //     return -1;
+    // }
+    memcpy(hi.bytes, instruction_buf, 32);
     free(temp_storage);
-    memcpy(hi.bytes, instruction_buf, LEN_IMPLANT);
+    hi.sz = offset;
     hi.catalyst = catalyst;
     memcpy(_hook_info, &hi, sizeof(HookInfo));
     return 0;
@@ -86,12 +84,13 @@ int InstallHook(void* pf_victim, void* pf_hook, HookInfo* _hook_info){
 
 int RemoveHook(void* pf_victim, HookInfo* h){
     DWORD oldprotect;
-    if (!VirtualProtect(pf_victim, LEN_IMPLANT, PAGE_EXECUTE_READWRITE, (PDWORD)&oldprotect)){
+    if (!VirtualProtect(pf_victim, h->sz, PAGE_EXECUTE_READWRITE, (PDWORD)&oldprotect)){
         return -1;
     }
-    memcpy(pf_victim, h->bytes, LEN_IMPLANT);
-    if (!VirtualProtect(pf_victim, LEN_IMPLANT, PAGE_EXECUTE_READ, (PDWORD)&oldprotect)){
+    memcpy(pf_victim, h->bytes, h->sz);
+    if (!VirtualProtect(pf_victim, h->sz, PAGE_EXECUTE_READ, (PDWORD)&oldprotect)){
         return -1;
     }
+    // free(h->bytes);
     VirtualFree(h->catalyst, 0, MEM_RELEASE);
 }

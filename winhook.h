@@ -11,7 +11,7 @@
 
 #define CALL 0xd0
 #define JMP 0xe0
-#define LEN_IMPLANT 12
+#define LEN_IMPLANT 13
 
 
 #define GET_VICTIM_ADDR(addr) \
@@ -21,7 +21,8 @@
 
 typedef struct hook_info{
     LPVOID catalyst;
-    unsigned char bytes[LEN_IMPLANT];
+    int sz;
+    unsigned char bytes[32];
 } HookInfo;
 
 int InstallHook(void* pf_victim, void* pf_hook, HookInfo* _hook_info);
